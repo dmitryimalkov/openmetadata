@@ -30,3 +30,12 @@ python3 -m venv mcp-bridge-venv --clear
 ./mcp-bridge-venv/bin/python3 mcp_bridge_test.py
 ```
 - 15 инструментов подтянулось — значит новый токен бота рабочий, мост до OpenMetadata достучался.
+
+9. Переиндексация, если нет коннекторов, но есть базы.
+    переиндекс в свежих версиях OpenMetadata живёт как системное приложение. Попробуй так:
+- Settings → Applications (в левом меню могут называться "Приложения" или через Settings → Marketplace → Installed Apps).
+- Найди Search Indexing (или SearchIndexingApplication).
+- Открой его → кнопка Run Now / «Запустить сейчас».
+- Убедись, что в опциях выбрано «Reindex all» / «Все сущности» (не только delta).
+
+  
