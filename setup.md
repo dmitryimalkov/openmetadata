@@ -25,3 +25,8 @@ python3 -m venv mcp-bridge-venv --clear
 ./mcp-bridge-venv/bin/pip install --upgrade pip
 ./mcp-bridge-venv/bin/pip install httpx mcp openai
 ```
+8. Тест
+```bash
+./mcp-bridge-venv/bin/python3 mcp_bridge_test.py
+```
+- 15 инструментов подтянулось — значит новый токен бота рабочий, мост до OpenMetadata достучался.
