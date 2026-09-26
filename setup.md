@@ -1,3 +1,9 @@
+# Вход
+```
+- ad-opa-demo: ssh -i /Users/dmitry/Downloads/id_rsa user1@192.144.13.138 cd ad-opa-demo
+- litellm: ssh -i /Users/dmitry/Downloads/CICD/id_rsa user1@176.109.108.197 cd /opt/litellm-stack
+- openmetadata: ssh -i /Users/dmitry/Downloads/id_rsa_3 user1@176.123.165.177 cd openmetadata
+```
 # Диагностика
 Если сессии в терминале разрываются, то проверь нагрузку на ВМ:
 SSH-сессия может подвисать/рваться из-за нехватки памяти, а заодно и OOM-killer мог убивать процесс Postgres прямо посреди записи — это отлично объяснило бы внезапную потерю данных без явного drop/recreate в логах.
