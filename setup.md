@@ -176,7 +176,7 @@ Database schema (если попросит) — можно указать audit 
 Через mc агента. Бинарники убрали. Нужно ставить GO и скачивать с Git. Цель получить mc --version
 
 Test Connection → жду результат.
-
+```
 dmitry@Dmitrys-MacBook-Pro ~ % mc alias set demo-minio http://192.144.13.138:9000 admin 'Eaws-qymO03nZ5k6m_cq4l6WW8I'
 Added `demo-minio` successfully.
 dmitry@Dmitrys-MacBook-Pro ~ % mc admin info demo-minio
@@ -198,4 +198,4 @@ dmitry@Dmitrys-MacBook-Pro ~ % mc admin user svcacct add demo-minio openmetadata
 Access Key: 4AKEEZPBQNRBXIXRTBWH
 Secret Key: YgaXlYjk1ehnbZmydWTqzUipAJ1RTdE9Tss0kNqu
 Expiration: no-expiry
-
+```
