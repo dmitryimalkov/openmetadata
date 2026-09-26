@@ -6,6 +6,7 @@
 - openmetadata: ssh -i /Users/dmitry/Downloads/id_rsa_3 user1@176.123.165.177 cd openmetadata
     - http://176.123.165.177:8585/signin
     - admin@open-metadata.org : admin : ApostolPavel430m#74
+    - ./backup.sh
 ```
 ## Проверка
 ```
