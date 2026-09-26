@@ -176,3 +176,26 @@ Database schema (если попросит) — можно указать audit 
 Через mc агента. Бинарники убрали. Нужно ставить GO и скачивать с Git. Цель получить mc --version
 
 Test Connection → жду результат.
+
+dmitry@Dmitrys-MacBook-Pro ~ % mc alias set demo-minio http://192.144.13.138:9000 admin 'Eaws-qymO03nZ5k6m_cq4l6WW8I'
+Added `demo-minio` successfully.
+dmitry@Dmitrys-MacBook-Pro ~ % mc admin info demo-minio
+●  192.144.13.138:9000
+   Uptime: 2 hours 
+   Version: 2025-09-07T16:13:09Z
+   Network: 1/1 OK 
+   Drives: 1/1 OK 
+   Pool: 1
+
+┌──────┬───────────────────────┬─────────────────────┬──────────────┐
+│ Pool │ Drives Usage          │ Erasure stripe size │ Erasure sets │
+│ 1st  │ 60.3% (total: 28 GiB) │ 1                   │ 1            │
+└──────┴───────────────────────┴─────────────────────┴──────────────┘
+
+1.7 MiB Used, 1 Bucket, 14 Objects
+1 drive online, 0 drives offline, EC:0
+dmitry@Dmitrys-MacBook-Pro ~ % mc admin user svcacct add demo-minio openmetadata-svc
+Access Key: 4AKEEZPBQNRBXIXRTBWH
+Secret Key: YgaXlYjk1ehnbZmydWTqzUipAJ1RTdE9Tss0kNqu
+Expiration: no-expiry
+
