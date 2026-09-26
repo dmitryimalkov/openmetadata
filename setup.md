@@ -1,3 +1,15 @@
+# Замечания
+Если сессии в терминале разрываются, то проверь нагрузку на ВМ:
+SSH-сессия может подвисать/рваться из-за нехватки памяти, а заодно и OOM-killer мог убивать процесс Postgres прямо посреди записи — это отлично объяснило бы внезапную потерю данных без явного drop/recreate в логах.
+```
+free -h
+uptime
+dmesg -T | grep -i "killed process" | tail -20
+sudo dmesg -T | grep -i "killed process" | tail -20
+Если не сработало, то
+sudo journalctl -k --since "2 hours ago" | grep -i "out of memory\|oom-killer\|killed process"
+```
+
 # Шаг 1 Проверка текущего состояния
 убедиться, что ничего не поменялось с пятницы (docker compose ps, вход admin/admin).
 # Шаг 2 Бот для MCP-моста
