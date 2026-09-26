@@ -170,5 +170,9 @@ Settings → Services → Databases → Add New Service → Clickhouse.
 Имя: ClickHouseMeta-demo.
 Заполни хост/порт/юзер/пароль выше.
 Database schema (если попросит) — можно указать audit или оставить пустым, если позволяет сканировать все.
+
+## minIO- коннектор
+Через mc агента. Бинарники убрали. Нужно ставить GO и скачивать с Git. Цель получить mc --version
+
 Test Connection → жду результат.
 ```
