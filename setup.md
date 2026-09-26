@@ -38,4 +38,60 @@ python3 -m venv mcp-bridge-venv --clear
 - Открой его → кнопка Run Now / «Запустить сейчас».
 - Убедись, что в опциях выбрано «Reindex all» / «Все сущности» (не только delta).
 
-  
+# Шаг 3 проверка данных
+```bash
+cd /opt/litellm-stack
+set -a; . ./.env; set +a
+curl -s -H "Authorization: Bearer $OPENMETADATA_TOKEN" \
+  "http://10.0.0.7:8585/api/v1/services/databaseServices?limit=20" | python3 -m json.tool
+```
+# Шаг 4 создаем backup и restore
+~/openmetadata/backup.sh
+```bash
+#!/bin/bash
+set -euo pipefail
+cd ~/openmetadata
+mkdir -p backups
+
+TS=$(date +%Y%m%d_%H%M%S)
+OUT="backups/openmetadata_db_${TS}.sql"
+
+docker exec openmetadata_postgresql pg_dump -U openmetadata_user openmetadata_db > "$OUT"
+
+echo "Бэкап сохранён: $OUT ($(du -h "$OUT" | cut -f1))"
+
+ls -t backups/openmetadata_db_*.sql 2>/dev/null | tail -n +8 | xargs -r rm --
+```
+~/openmetadata/restore.sh
+```bash
+#!/bin/bash
+set -euo pipefail
+cd ~/openmetadata
+
+LATEST=$(ls -t backups/openmetadata_db_*.sql 2>/dev/null | head -1)
+if [ -z "$LATEST" ]; then
+  echo "Бэкапов не найдено в ~/openmetadata/backups"
+  exit 1
+fi
+
+echo "Восстанавливаю из: $LATEST"
+read -p "Это перезапишет текущие данные в openmetadata_db. Продолжить? [y/N] " CONFIRM
+if [ "$CONFIRM" != "y" ] && [ "$CONFIRM" != "Y" ]; then
+  echo "Отменено."
+  exit 0
+fi
+
+cat "$LATEST" | docker exec -i openmetadata_postgresql psql -U openmetadata_user -d openmetadata_db
+
+echo "Восстановление завершено. Проверь: docker exec openmetadata_postgresql psql -U openmetadata_user -d openmetadata_db -c 'select count(*) from dbservice_entity;'"
+```
+
+Создай оба файла и сделай исполняемыми:
+```bash
+cd ~/openmetadata
+nano backup.sh   # вставь содержимое, сохрани
+nano restore.sh  # вставь содержимое, сохрани
+chmod +x backup.sh restore.sh
+```
+Дальше — привычка: перед каждым выключением ВМ гоняй `./backup.sh.`
+
