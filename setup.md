@@ -1,6 +1,8 @@
 # Вход
 ```
 - ad-opa-demo: ssh -i /Users/dmitry/Downloads/id_rsa user1@192.144.13.138 cd ad-opa-demo
+    - http://176.123.165.177:8585/signin
+    - admin@open-metadata.org : admin
 - litellm: ssh -i /Users/dmitry/Downloads/CICD/id_rsa user1@176.109.108.197 cd /opt/litellm-stack
 - openmetadata: ssh -i /Users/dmitry/Downloads/id_rsa_3 user1@176.123.165.177 cd openmetadata
 ```
