@@ -111,4 +111,27 @@ chmod +x backup.sh restore.sh
 
 Если не помнишь пароль openmetadata_ro — тогда сбросим его на demo-stand через ALTER USER.
 
-
+## Click-house- коннектор
+### Ищем данные на демо стенде
+```bash
+docker compose ps | grep -i clickhouse
+docker compose config | grep -A 15 clickhouse
+```
+Это покажет имя контейнера, порты (обычно 8123 — HTTP-интерфейс, 9000 — native) и переменные окружения с юзером/паролем (CLICKHOUSE_USER, CLICKHOUSE_PASSWORD или похожие).
+### Собираем коннектор
+Есть все данные. Заодно вот и пароль от postgres пользователя (BLmLcV8xaKqiSTLiFM1HY7_d) и app_user — но нам нужен именно ClickHouse:
+```
+Host: 10.0.0.5 (внутренний IP demo-стенда, как и для Postgres)
+Port: 8123 (HTTP-интерфейс, порт открыт наружу)
+Username: default
+Password: YqBucHdJFWRna8KvAm1JpHW3
+Database: audit (это дефолтная БД, но коннектор ClickHouse в OpenMetadata обычно видит все базы, если у пользователя есть права)
+```
+В форме OpenMetadata:
+```
+Settings → Services → Databases → Add New Service → Clickhouse.
+Имя: ClickHouseMeta-demo.
+Заполни хост/порт/юзер/пароль выше.
+Database schema (если попросит) — можно указать audit или оставить пустым, если позволяет сканировать все.
+Test Connection → жду результат.
+```
