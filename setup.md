@@ -95,3 +95,20 @@ chmod +x backup.sh restore.sh
 ```
 Дальше — привычка: перед каждым выключением ВМ гоняй `./backup.sh.`
 
+# Шаг 5 Создаем коннекторы
+## Postgres-коннектор:
+
+- Settings → Services → Databases → Add New Service.
+- Тип: Postgres.
+- Имя сервиса: demo-stand-postgres (как было).
+- Connection:
+- Username: openmetadata_ro
+- Password: пароль этого read-only юзера (Volga430m74!)
+- Host and Port: 10.0.0.5:5432
+- Database: salesdb
+- Test Connection → должно быть 8/9 (query-history/pg_stat_statements не пройдёт, это нормально, как было раньше).
+- Save → затем добавь Metadata Ingestion pipeline (обычно предлагается сразу после Save) → Deploy → Run.
+
+Если не помнишь пароль openmetadata_ro — тогда сбросим его на demo-stand через ALTER USER.
+
+
