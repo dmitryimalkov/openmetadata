@@ -7,6 +7,29 @@
     - http://176.123.165.177:8585/signin
     - admin@open-metadata.org : admin : ApostolPavel430m#74
 ```
+## Проверка
+```
+docker exec -it openmetadata_postgresql psql -U openmetadata_user -d openmetadata_db -c "
+select name, 'database' as kind from dbservice_entity
+union all
+select name, 'pipeline' as kind from pipeline_service_entity
+union all
+select name, 'storage' as kind from storage_service_entity;
+"
+```
+Ответ должен быть такой
+```
+        name         |   kind   
+---------------------+----------
+ ClickHouseMeta-demo | database
+ demo-stand-postgres | database
+ demo-stand-airflow  | pipeline
+ demo-stand-minio    | storage
+(4 rows)
+
+
+```
+
 # Диагностика
 Если сессии в терминале разрываются, то проверь нагрузку на ВМ:
 SSH-сессия может подвисать/рваться из-за нехватки памяти, а заодно и OOM-killer мог убивать процесс Postgres прямо посреди записи — это отлично объяснило бы внезапную потерю данных без явного drop/recreate в логах.
