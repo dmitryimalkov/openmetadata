@@ -258,3 +258,46 @@ SELECT * FROM pg_policies WHERE tablename = 'sales';
 tenant_a_direct_access / tenant_b_direct_access — применяются только к ролям tenant_company_a_role / tenant_company_b_role, которых openmetadata_ro не имеет.
 
 4. То есть данные не потерялись — они на месте, но openmetadata_ro их не видит из-за RLS. Это и объясняет весь эффект пустого Sample Data.
+
+5. Так что openmetadata_ro не подходит ни под одну из трёх PERMISSIVE-политик — а раз это PERMISSIVE (не RESTRICTIVE), при отсутствии совпадения с любой из них результат — 0 строк. Это абсолютно корректная работа RLS, никакой поломки нет — просто наш read-only пользователь оказался "невидимым посетителем" с точки зрения политик изоляции. Хорошая новость: это значит демонстрация мультитенантности работает правильно — она не даёт доступа никому, кто явно не подтверждён.
+
+Как аккуратно дать OpenMetadata доступ, не трогая существующие политики:
+
+Самый чистый способ — сделать openmetadata_ro обходящим RLS ролью (bypass), а не пытаться подогнать его под tenant-политики (что было бы концептуально неверно — он не относится ни к какому тенанту, это read-only каталог для метаданных):
+
+sql
+ALTER ROLE openmetadata_ro BYPASSRLS;
+
+Это единственная точечная правка, ничего не меняет в самих политиках tenant_isolation_policy/tenant_a_direct_access/tenant_b_direct_access — они продолжат работать для реальных tenant-ролей ровно как задумано. BYPASSRLS даёт этой конкретной служебной роли полный обзор данных для целей каталогизации/профилирования, что логично для инструмента governance уровня "видит всё, чтобы описать всё".
+
+Выполни эту команду от суперпользователя (postgres), затем повтори проверку:
+
+sql
+SET ROLE openmetadata_ro;
+SELECT * FROM sales LIMIT 5;
+RESET ROLE;
+
+Если увидишь все 5 строк — дело в шляпе, и после этого просто повтори "Запустить" на AutoClassification Agent в OpenMetadata.
+
+salesdb=# SET ROLE openmetadata_ro;
+SELECT * FROM sales LIMIT 5;
+RESET ROLE;
+SET
+ id | tenant_id | region | product  | amount | sale_date  
+----+-----------+--------+----------+--------+------------
+  1 | company_a | eu     | Widget X |   1000 | 2026-07-01
+  2 | company_a | eu     | Widget Y |   1500 | 2026-07-15
+  3 | company_a | uk     | Widget X |    900 | 2026-08-01
+  4 | company_b | eu     | Gadget Z |   5000 | 2026-07-05
+  5 | company_b | us     | Gadget W |   7000 | 2026-08-10
+(5 rows)
+
+RESET
+
+Отлично, всё сработало — 5 реальных строк видны, RLS-обход через BYPASSRLS сделал своё дело, при этом сами tenant-политики остались нетронутыми, так что демонстрация мультитенантности не пострадала.
+
+Теперь возвращайся в OpenMetadata UI и запусти AutoClassification Agent ещё раз — на этот раз Sampler должен реально сохранить эти 5 строк, и на вкладке «Пример данных» у таблицы sales наконец появятся сами значения, а не только заголовки колонок.
+
+Ура!!!
+
+Ура, действительно! 🎉 Вся цепочка теперь работает целиком: discovery → структура → lineage → PII-классификация → sample data — от нуля до полностью рабочего каталога с реальными данными твоего multi-tenant demo stand.
