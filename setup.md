@@ -265,23 +265,24 @@ tenant_a_direct_access / tenant_b_direct_access — применяются то�
 
 Самый чистый способ — сделать openmetadata_ro обходящим RLS ролью (bypass), а не пытаться подогнать его под tenant-политики (что было бы концептуально неверно — он не относится ни к какому тенанту, это read-only каталог для метаданных):
 
-sql
+```sql
 ALTER ROLE openmetadata_ro BYPASSRLS;
-
+```
 Это единственная точечная правка, ничего не меняет в самих политиках tenant_isolation_policy/tenant_a_direct_access/tenant_b_direct_access — они продолжат работать для реальных tenant-ролей ровно как задумано. BYPASSRLS даёт этой конкретной служебной роли полный обзор данных для целей каталогизации/профилирования, что логично для инструмента governance уровня "видит всё, чтобы описать всё".
 
 Выполни эту команду от суперпользователя (postgres), затем повтори проверку:
 
-sql
+```sql
 SET ROLE openmetadata_ro;
 SELECT * FROM sales LIMIT 5;
 RESET ROLE;
-
+```
 Если увидишь все 5 строк — дело в шляпе, и после этого просто повтори "Запустить" на AutoClassification Agent в OpenMetadata.
-
+```
 salesdb=# SET ROLE openmetadata_ro;
 SELECT * FROM sales LIMIT 5;
 RESET ROLE;
+Ответ:
 SET
  id | tenant_id | region | product  | amount | sale_date  
 ----+-----------+--------+----------+--------+------------
@@ -293,7 +294,7 @@ SET
 (5 rows)
 
 RESET
-
+```
 Отлично, всё сработало — 5 реальных строк видны, RLS-обход через BYPASSRLS сделал своё дело, при этом сами tenant-политики остались нетронутыми, так что демонстрация мультитенантности не пострадала.
 
 Теперь возвращайся в OpenMetadata UI и запусти AutoClassification Agent ещё раз — на этот раз Sampler должен реально сохранить эти 5 строк, и на вкладке «Пример данных» у таблицы sales наконец появятся сами значения, а не только заголовки колонок.
