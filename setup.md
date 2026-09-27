@@ -232,3 +232,29 @@ Access Key: 4AKEEZPBQNRBXIXRTBWH
 Secret Key: YgaXlYjk1ehnbZmydWTqzUipAJ1RTdE9Tss0kNqu
 Expiration: no-expiry
 ```
+## Включаем Sample Data
+1. Открой Настройки → Сервисы → demo-stand-postgres → Агенты → AutoClassification Agent → Редактировать,
+   и там ищи раздел, отвечающий за сэмплирование — обычно называется что-то вроде "Профиль выборки" / "Sampling" или отдельный тумблер "Store Sample Data".
+   Он может быть рядом с настройками процента выборки (Sample %) или скрыт в разделе "Расширенная конфигурация", как мы видели у Profiler'а.
+
+2. Вот он — "Store Sample Data". Включи этот тумблер, сохрани настройки агента и запусти AutoClassification Agent заново — теперь при следующем прогоне сэмплер должен реально сохранить строки в каталог, а не просто прогнать их через классификатор PII "в памяти", как было раньше.
+Скинь, что видно в его настройках — особенно любой пункт, упоминающий "sample" или "store".
+
+3. Почти — заголовки колонок теперь видны (id, tenant_id, region, product, amount, sale_date), значит структура точно подтянулась и таблица сейчас распознана как содержащая tenant_id — это прямое подтверждение той multi-tenant изоляции, которую отражают RLS-теги, которые мы видели раньше.
+
+Но сами строки данных всё ещё пустые — "No data". Похоже, включение тумблера сохранилось, но агент ещё не перезапускался с новой настройкой. Зайди обратно в Агенты → AutoClassification Agent и нажми «Запустить» ещё раз — теперь, когда "Store Sample Data" включён, при этом прогоне строки должны реально сохраниться.
+```
+docker exec -it demo-postgres psql -U postgres -d salesdb
+\dt public.*
+SELECT schemaname, relname, n_live_tup FROM pg_stat_user_tables;
+
+Проверим политики
+SELECT * FROM pg_policies WHERE tablename = 'sales';
+
+
+```
+1. tenant_isolation_policy — применяется ко всем ({public}), требует tenant_id = current_setting('app.tenant_id'). Наш openmetadata_ro не устанавливает эту сессионную переменную — значит current_setting(..., true) возвращает NULL, и tenant_id = NULL никогда не равно TRUE.
+2. Эта политика одна уже отсекает всё.
+tenant_a_direct_access / tenant_b_direct_access — применяются только к ролям tenant_company_a_role / tenant_company_b_role, которых openmetadata_ro не имеет.
+
+4. То есть данные не потерялись — они на месте, но openmetadata_ro их не видит из-за RLS. Это и объясняет весь эффект пустого Sample Data.
