@@ -1,4 +1,4 @@
-# OpenMetadata POC — Настройка подключений
+# OpenMetadata POC — Настройка подключений (Часть 1)
 
 Sep 20, 2026 · @Someone
 
