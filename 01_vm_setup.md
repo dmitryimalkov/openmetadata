@@ -5,46 +5,38 @@
 
 # Начало
 ## key
-C:\Users\malkov.d>ssh-keygen -t ed25519 -f C:\Users\malkov.d\.ssh\vm-omdkey -N "" -C "windows-dev-nopass"
+ssh-keygen -t ed25519 -f C:\Users\malkov.d\.ssh\vm-omdkey -N "" -C "windows-dev-nopass"
 ```
-PS C:\Users\malkov.d> icacls "C:\Users\malkov.d\.ssh\vm-omdkey" /inheritance:r /grant malkov.d:R
-обработанный файл: C:\Users\malkov.d\.ssh\vm-omdkey
-Успешно обработано 1 файлов; не удалось обработать 0 файлов
-PS C:\Users\malkov.d> icacls "C:\Users\malkov.d\.ssh\vm-omdkey.pub" /inheritance:r /grant malkov.d:R
+icacls "C:\Users\malkov.d\.ssh\vm-omdkey" /inheritance:r /grant malkov.d:R
+icacls "C:\Users\malkov.d\.ssh\vm-omdkey.pub" /inheritance:r /grant malkov.d:R
 ```
 ```
-malkov-d@mcphub-dev-app-03:~$ mkdir -p ~/.ssh
-malkov-d@mcphub-dev-app-03:~$ chmod 700 ~/.ssh
-malkov-d@mcphub-dev-app-03:~$ nano ~/.ssh/authorized_keys
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+nano ~/.ssh/authorized_keys
 ```
 ```
  Get-Content C:\Users\malkov.d\.ssh\vm-omdkey.pub | Set-Clipboard
 ```
 ```
-malkov-d@mcphub-dev-app-03:~$ chmod 600 ~/.ssh/authorized_keys
-malkov-d@mcphub-dev-app-03:~$ chown -R $USER:$USER ~/.ssh
-malkov-d@mcphub-dev-app-03:~$ sudo LANG=C LC_ALL=C ufw enable
-[sudo] password for malkov-d:
+chmod 600 ~/.ssh/authorized_keys
+chown -R $USER:$USER ~/.ssh
+sudo LANG=C LC_ALL=C ufw enable
+password for malkov-d:
 Command may disrupt existing ssh connections. Proceed with operation (y|n)? y
 Firewall is active and enabled on system startup
-malkov-d@mcphub-dev-app-03:~$ sudo LANG=C LC_ALL=C ufw allow 22/tcp
-Rule added
-Rule added (v6)
-malkov-d@mcphub-dev-app-03:~$ sudo LANG=C LC_ALL=C ufw allow 8080/tcp
-Rule added
-Rule added (v6)
-malkov-d@mcphub-dev-app-03:~$ sudo LANG=C LC_ALL=C ufw allow 8585/tcp
-Rule added
-Rule added (v6)
-malkov-d@mcphub-dev-app-03:~$ ss -tlnp
+sudo LANG=C LC_ALL=C ufw allow 22/tcp
+sudo LANG=C LC_ALL=C ufw allow 8080/tcp
+sudo LANG=C LC_ALL=C ufw allow 8585/tcp
+ss -tlnp
 ```
 
 
 ```
-malkov-d@mcphub-dev-app-03:~$
-malkov-d@mcphub-dev-app-03:~$ cd /etc/apt
-malkov-d@mcphub-dev-app-03:/etc/apt$ nano sources.list
-malkov-d@mcphub-dev-app-03:/etc/apt$
+cd /etc/apt
+/etc/apt$ nano sources.list
+убрать sberworks и поставить ubuntu...
+После сделать apt update или что-то в этом роде и обновить все
 ```
 
 # App
