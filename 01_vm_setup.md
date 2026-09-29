@@ -15,6 +15,7 @@ mkdir -p ~/.ssh
 chmod 700 ~/.ssh
 nano ~/.ssh/authorized_keys
 ```
+На компьютере (не на ВМ) забрать ключ командой ниже и проставить на ВМ
 ```
  Get-Content C:\Users\malkov.d\.ssh\vm-omdkey.pub | Set-Clipboard
 ```
