@@ -105,6 +105,10 @@ userPassword: {SSHA}CormEkr8mEb0PGRF+yhSDTHFNAYSJfvg
 ```bash
 ldapadd -x -D "cn=admin,dc=demo,dc=local" -w AdminPass123! -f /tmp/openmetadata-svc.ldif
 ```
+> [!NOTE]
+> Остановились здесь
+
+Это обычный текст, а <span style="color: blue;">этот фрагмент — синий</span>.
 
 ### 2. Роль FAB (необходима, но недостаточна)
 
