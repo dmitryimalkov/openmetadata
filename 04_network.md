@@ -39,7 +39,9 @@ sudo ufw status; sudo iptables -L INPUT -n | head -20; sudo iptables -L DOCKER-U
 _Проверка🩹_ 
 - ip routedocker network ls -q | xargs docker network inspect -f '{{.Name}} {{range .IPAM.Config}}{{.Subnet}}{{end}}'
 Если IP ВМ ad-opa-demo попадает в одну из этих подсетей, причина найдена. Лечится сменой подсетей Docker через default-address-pools в /etc/docker/daemon.json. 
-- 1 и 2 = OK. Проверьте host и port в настройках коннектора: там должен быть внутренний IP, а не имя контейнера или localhost. 
+
+##### 1 и 2 = OK. 
+Проверьте host и port в настройках коннектора: там должен быть внутренний IP, а не имя контейнера или localhost. 
 
 ##### Что прислать (IP можно замаскировать, но так, чтобы было видно, в какую подсеть они попадают):
 1.	Вывод шагов 1, 2 и 3. 
