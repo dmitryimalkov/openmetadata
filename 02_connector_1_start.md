@@ -108,7 +108,7 @@ ldapadd -x -D "cn=admin,dc=demo,dc=local" -w AdminPass123! -f /tmp/openmetadata-
 > [!NOTE]
 > Остановились здесь
 
-Это обычный текст, а <span style="color: blue;">этот фрагмент — синий</span>.
+
 
 ### 2. Роль FAB (необходима, но недостаточна)
 
