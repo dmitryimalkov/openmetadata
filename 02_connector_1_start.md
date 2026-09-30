@@ -154,7 +154,13 @@ docker exec demo-minio mc idp ldap policy attach local readonly \
 ```
 
 ### 3. Генерация статического Access Key / Secret Key
-
+```
+Для DEV
+WARN[0000] /home/malkov-d/atlas/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion
+Access Key: 1OMUE6EY21XE2RZ3YFC6
+Secret Key: an8v1jiW0wm1E6nq1pgH5qTWRMenj+U19EpbUiJP
+Expiration: no-expiry
+```
 Неудачные попытки: `mc admin user svcacct add` — ошибка «User DN not found», хотя `ldapsearch` подтверждает существование записи; `mc idp ldap login` — такой команды не существует в этой версии `mc`.
 
 **Рабочее решение** — `mc idp ldap accesskey create-with-login`, логинится по LDAP-учётным данным и генерирует пару ключей. Требует реального TTY (не работает через heredoc/pipe в stdin):
