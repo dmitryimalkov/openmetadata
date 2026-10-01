@@ -877,12 +877,11 @@ docker compose exec ldap ldapsearch -x -H ldap://localhost -D
 показывается только один раз. В чат ключи не присылайте.
 
 **5. Доступность с ВМ OpenMetadata**
-
+```
 docker exec openmetadata_ingestion curl -s -o /dev/null -w
 '%{http_code}\n' --max-time 5 \\
-
 http://172.21.101.83:9000/minio/health/live
-
+```
 Ожидаем 200. Подсеть 172.21.0.0/16 уже есть в NO_PROXY, так что прокси
 мешать не должен. Если запрос зависнет, проверьте, что порт 9000
 опубликован: docker compose ps minio.
@@ -891,36 +890,28 @@ http://172.21.101.83:9000/minio/health/live
 
 Урок POC: OpenMetadata каталогизирует только пути, перечисленные в
 openmetadata.json. Сначала посмотрите структуру бакета:
-
+```
 docker compose exec minio mc ls --recursive local/datasets \| head -30
-
+```
 Затем создайте манифест. Пути подставьте свои по выводу ls:
-
+```
 docker compose exec minio sh -c 'cat \> /tmp/openmetadata.json \<\<EOF
-
 {"entries":\[
-
 {"dataPath":"company_a/raw","structureFormat":"csv","isPartitioned":false},
-
 {"dataPath":"company_b/raw","structureFormat":"csv","isPartitioned":false}
-
 \]}
-
 EOF
-
 mc cp /tmp/openmetadata.json local/datasets/openmetadata.json'
-
+```
 **7. Сервис в OpenMetadata**
 
 Settings → Services → **Storage** → Add → **S3**:
-
+```
 - **AWS Access Key ID / Secret Access Key** — ключи из шага 4;
-
 - **AWS Region** — us-east-1;
-
 - **Endpoint URL** — http://172.21.101.83:9000;
-
 - **Test Connection**. Предупреждение про CloudWatch GetMetrics
+```
   ожидаемо, потому что MinIO этот API не поддерживает;
 
 - сохраните, затем запустите **Metadata Agent**.
