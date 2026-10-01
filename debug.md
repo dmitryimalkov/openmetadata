@@ -25,32 +25,28 @@ docker compose logs --tail 50 opa \| grep -i '\<user\>'
 a\) **LDAP.** Учётка (openmetadata-svc или та, что вы завели в dev)
 должна состоять в группе без тенантного префикса, например
 Platform-MetadataIngestion:
-
+```
 docker compose exec \<ldap_container\> ldapsearch -x -H ldap://localhost
 \\
-
 -D "cn=admin,dc=demo,dc=local" -W -b "dc=demo,dc=local"
 "(cn=Platform-MetadataIngestion)" member
-
+```
 Если группы нет, создайте её через ldif и добавьте в member DN учётки.
 
 b\) **opa_auth_manager.py.** В ROLE_MAP должна быть строка:
-
+```
 ROLE_MAP = {"Analysts": "analyst", "Admins": "admin", "Viewers":
-"viewer",
-
-"MetadataIngestion": "metadata_ingestion"}
-
-c\) **authz.rego.** Роль metadata_ingestion должна быть в service_roles,
-чтобы обходить same_tenant. Кроме того, в role_permissions у неё должно
-быть чтение пайплайнов (DAG):
-
+"viewer", "MetadataIngestion": "metadata_ingestion"}
+```
+c\) **authz.rego.** Роль metadata_ingestion должна быть в service_roles, чтобы обходить same_tenant. Кроме того, в role_permissions у неё должно быть чтение пайплайнов (DAG):
+```
 grep -nE 'metadata_ingestion\|service_roles' \<путь\>/authz.rego
+```
+**3. Перезапустите webserver.** Правки в .py без этого не применятся. OPA перечитывает .rego сам.
 
-**3. Перезапустите webserver.** Правки в .py без этого не применятся.
-OPA перечитывает .rego сам.
-
+```
 docker compose restart airflow-webserver
+```
 
 Затем повторите curl из шага 1: должен вернуться 200. После этого
 нажмите **Retry Test** в OpenMetadata.
